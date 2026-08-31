@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MindelSpec v0 — visual language</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <article class="legend-page">
+    <p><a href="./index.html">← MOSAIC sandbox viewer</a></p>
+    <h1>MindelSpec v0 glyph set</h1>
+    <p>Use these shapes the same way in every model. Colour is secondary: module identity can use colour, but type must still be readable in greyscale.</p>
+
+    <div class="glyph-row">
+      <svg viewBox="0 0 140 48"><path d="M 8 4 H 132 Q 140 4 140 12 V 36 Q 140 44 132 44 H 8 Q 0 44 0 36 V 12 Q 0 4 8 4 Z" fill="#fffdf8" stroke="#1c1915"/></svg>
+      <div><strong>process</strong> — a transformation (forward model, inverse model, predictor).</div>
+    </div>
+    <div class="glyph-row">
+      <svg viewBox="0 0 140 48"><path d="M 14 4 L 140 4 L 126 44 L 0 44 Z" fill="#fffdf8" stroke="#1c1915"/></svg>
+      <div><strong>representation</strong> — a state, goal, or contextual cue.</div>
+    </div>
+    <div class="glyph-row">
+      <svg viewBox="0 0 140 48"><circle cx="70" cy="24" r="20" fill="#fffdf8" stroke="#a33b32"/><line x1="58" y1="12" x2="82" y2="36" stroke="#a33b32"/><line x1="82" y1="12" x2="58" y2="36" stroke="#a33b32"/></svg>
+      <div><strong>comparator</strong> — a prediction or control error (circular summing junction).</div>
+    </div>
+    <div class="glyph-row">
+      <svg viewBox="0 0 140 48"><path d="M 22 4 H 118 A 20 20 0 0 1 118 44 H 22 A 20 20 0 0 1 22 4 Z" fill="#fffdf8" stroke="#1c1915"/></svg>
+      <div><strong>gate</strong> — a responsibility-weighted mix or selection.</div>
+    </div>
+    <div class="glyph-row">
+      <svg viewBox="0 0 140 48"><rect x="4" y="8" width="132" height="32" rx="6" fill="#fffdf8" stroke="#2f5d8c"/><rect x="16" y="16" width="40" height="16" fill="#2f5d8c"/><rect x="60" y="16" width="24" height="16" fill="#c46b1a"/></svg>
+      <div><strong>distribution</strong> — a hypothesis distribution (λ, softmax, prior).</div>
+    </div>
+    <div class="glyph-row">
+      <svg viewBox="0 0 140 48"><rect x="8" y="8" width="124" height="32" rx="8" fill="#ece7dc" stroke="#9a958c" stroke-dasharray="6 4"/></svg>
+      <div><strong>delay</strong> — hold a signal so two times can meet (predicted x̂_t+1 vs actual x_t+1), or sensory / feedback lag.</div>
+    </div>
+    <div class="glyph-row">
+      <svg viewBox="0 0 140 48"><rect x="6" y="8" width="128" height="32" fill="#fffdf8" stroke="#3d6b4f" stroke-width="3"/></svg>
+      <div><strong>plant</strong> — body or world, not an internal model.</div>
+    </div>
+
+    <h2>Edges</h2>
+    <p><strong>information</strong> — solid arrow. <strong>gating</strong> — width tracks λ. <strong>error</strong> — rust. <strong>context</strong> — dashed, often paper-only in this demo.</p>
+    <p>Grey dashed nodes are in the source paper but <em>not in this implementation</em>. Toggle “Paper architecture” in the viewer to restore them.</p>
+    <p><a href="../docs/protocol-draft.md">Full protocol draft</a> · <a href="../docs/protocol-v0.1.md">v0.1</a></p>
+  </article>
+</body>
+</html>

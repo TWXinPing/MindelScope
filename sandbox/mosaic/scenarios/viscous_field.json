@@ -1,0 +1,51 @@
+{
+  "id": "viscous-field-switch",
+  "title": "黏滯力場切換與記憶保留",
+  "model": "mosaic-1998-1d",
+  "condition": { "feedback_delay_steps": 0 },
+  "realWorldAnalogy": "在空氣中伸手，然後像突然伸進水或蜂蜜；力場關掉後，舊的「空氣」技能應該還在。實驗室對應是黏滯力場適應（Shadmehr & Mussa-Ivaldi 式），不是舉不同質量的杯子。",
+  "beats": [
+    {
+      "trial": 0,
+      "t": "session_start",
+      "caption": "開始：自由空間（b = 0）。兩個模組參數不同，責任訊號先大致平分。",
+      "watch": ["lambda_dist", "inv_1", "fwd_1"]
+    },
+    {
+      "trial": 10,
+      "t": "free_learning",
+      "caption": "仍在空氣中。前饋 u_ff 應逐漸接手，回饋 u_fb 下降；模組 1 的 λ 開始領先。",
+      "watch": ["u_fb", "gate", "lambda_dist"]
+    },
+    {
+      "trial": 29,
+      "t": "pre_switch",
+      "caption": "力場即將出現。記下現在是誰在控制——等一下看它會不會被毀掉。",
+      "watch": ["lambda_dist", "fwd_1"]
+    },
+    {
+      "trial": 30,
+      "t": "viscous_on",
+      "caption": "黏滯力場開啟（b = 2.5）。模組 1 的預測誤差先變大，λ 應改掛到模組 2。",
+      "watch": ["cmp_1", "cmp_2", "lambda_dist", "plant"]
+    },
+    {
+      "trial": 50,
+      "t": "viscous_learned",
+      "caption": "力場中段：模組 2 應主導。模組 1 的參數不該被沖掉——這就是模組化要避免的干擾。",
+      "watch": ["inv_2", "fwd_2", "lambda_dist"]
+    },
+    {
+      "trial": 70,
+      "t": "viscous_off",
+      "caption": "力場關掉。若記憶保留成功，λ 應迅速回到模組 1，不必像第一次那樣慢慢學。",
+      "watch": ["lambda_dist", "inv_1"]
+    },
+    {
+      "trial": 90,
+      "t": "retention",
+      "caption": "回到自由空間後段：舊技能回來了。這對應論文對「去適應很快、再適應更快」的解釋。",
+      "watch": ["lambda_dist", "u_fb"]
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mindelscope.org/schema/mindelspec.v0.json",
+  "title": "MindelSpec v0",
+  "description": "Shared visual language for cognitive / computational neuroscience models. v0 is the minimal set needed to express the MOSAIC 1D demo.",
+  "type": "object",
+  "required": ["mindelspec", "id", "title", "modules", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "mindelspec": { "type": "string", "enum": ["0.0"] },
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "citation": { "type": "string" },
+    "interpretation": {
+      "type": "string",
+      "enum": ["unofficial", "author-confirmed"]
+    },
+    "description": { "type": "string" },
+    "levels": {
+      "type": "object",
+      "description": "Marr-style annotations for the whole model.",
+      "properties": {
+        "computational": { "type": "string" },
+        "algorithmic": { "type": "string" },
+        "implementational": { "type": "string" }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/module" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/edge" }
+    },
+    "distributions": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/distribution" }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["x", "y"],
+        "properties": {
+          "x": { "type": "number" },
+          "y": { "type": "number" }
+        }
+      }
+    },
+    "unimplemented": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Module ids that appear in the source paper but are not run in the attached simulation."
+    },
+    "traceBinding": {
+      "type": "object",
+      "description": "Maps MindelSpec module/edge ids to keys in a traces.json bundle.",
+      "additionalProperties": { "type": "string" }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Paths or ids of scenario scripts."
+    }
+  },
+  "definitions": {
+    "moduleType": {
+      "type": "string",
+      "enum": [
+        "process",
+        "representation",
+        "comparator",
+        "gate",
+        "distribution",
+        "delay",
+        "plant",
+        "scenario_event"
+      ]
+    },
+    "edgeType": {
+      "type": "string",
+      "enum": ["information", "gating", "error", "context"]
+    },
+    "annotation": {
+      "type": "object",
+      "properties": {
+        "goal": { "type": "string", "description": "Computational goal of this node." },
+        "equation": { "type": "string", "description": "LaTeX or plaintext equation." },
+        "scenario": { "type": "string", "description": "Mapping onto a real cognitive / behavioural event." }
+      }
+    },
+    "module": {
+      "type": "object",
+      "required": ["id", "type", "label"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "$ref": "#/definitions/moduleType" },
+        "label": { "type": "string" },
+        "role": { "type": "string" },
+        "implemented": { "type": "boolean", "default": true },
+        "group": { "type": "string", "description": "Optional module pair / subsystem id." },
+        "annotation": { "$ref": "#/definitions/annotation" },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "type", "source", "target"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "$ref": "#/definitions/edgeType" },
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "signal": { "type": "string" },
+        "gatedBy": { "type": "string", "description": "Module id of a gate or distribution that scales this edge." },
+        "implemented": { "type": "boolean", "default": true },
+        "annotation": { "$ref": "#/definitions/annotation" }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "required": ["id", "module", "family"],
+      "properties": {
+        "id": { "type": "string" },
+        "module": { "type": "string" },
+        "family": {
+          "type": "string",
+          "enum": ["softmax", "gaussian_likelihood", "categorical", "custom"]
+        },
+        "equation": { "type": "string" },
+        "over": { "type": "string", "description": "What the distribution is over, e.g. modules." }
+      }
+    }
+  }
+}

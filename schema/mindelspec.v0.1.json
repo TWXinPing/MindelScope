@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mindelscope.org/schema/mindelspec.v0.1.json",
+  "title": "MindelSpec v0.1",
+  "description": "v0 glyph set plus reporting fields. A 0.0 document is not required to use these fields.",
+  "type": "object",
+  "required": ["mindelspec", "id", "title", "modules", "edges", "caption"],
+  "additionalProperties": false,
+  "properties": {
+    "mindelspec": { "type": "string", "enum": ["0.1"] },
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "caption": { "type": "string" },
+    "citation": { "type": "string" },
+    "interpretation": { "type": "string", "enum": ["unofficial", "author-confirmed"] },
+    "description": { "type": "string" },
+    "staticOnly": { "type": "boolean" },
+    "doubleEncoding": {
+      "type": "object",
+      "properties": {
+        "typeByShape": { "type": "boolean" },
+        "identityByColor": { "type": "boolean" }
+      }
+    },
+    "reports": {
+      "type": "object",
+      "properties": {
+        "clocks": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["across_trials", "within_trial", "none"] }
+        },
+        "hasDistribution": { "type": "boolean" },
+        "hasScenario": { "type": "boolean" },
+        "hasUnimplementedSplit": { "type": "boolean" }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "parent": { "type": "string" }
+        }
+      }
+    },
+    "relatedStandards": {
+      "type": "object",
+      "properties": {
+        "modeldb": { "type": "string" },
+        "neuroml": { "type": "string" },
+        "openminds": { "type": "string" },
+        "doi": { "type": "string" }
+      }
+    },
+    "levels": {
+      "type": "object",
+      "properties": {
+        "computational": { "type": "string" },
+        "algorithmic": { "type": "string" },
+        "implementational": { "type": "string" }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/module" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/edge" }
+    },
+    "distributions": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/distribution" }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["x", "y"],
+        "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+      }
+    },
+    "unimplemented": { "type": "array", "items": { "type": "string" } },
+    "traceBinding": { "type": "object", "additionalProperties": { "type": "string" } },
+    "scenarios": { "type": "array", "items": { "type": "string" } }
+  },
+  "definitions": {
+    "moduleType": {
+      "type": "string",
+      "enum": ["process", "representation", "comparator", "gate", "distribution", "delay", "plant", "scenario_event"]
+    },
+    "edgeType": { "type": "string", "enum": ["information", "gating", "error", "context"] },
+    "annotation": {
+      "type": "object",
+      "properties": {
+        "goal": { "type": "string" },
+        "equation": { "type": "string" },
+        "scenario": { "type": "string" }
+      }
+    },
+    "module": {
+      "type": "object",
+      "required": ["id", "type", "label"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "$ref": "#/definitions/moduleType" },
+        "label": { "type": "string" },
+        "role": { "type": "string" },
+        "implemented": { "type": "boolean" },
+        "group": { "type": "string" },
+        "annotation": { "$ref": "#/definitions/annotation" },
+        "parameters": { "type": "object" }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "type", "source", "target"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "$ref": "#/definitions/edgeType" },
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "signal": { "type": "string" },
+        "gatedBy": { "type": "string" },
+        "implemented": { "type": "boolean" },
+        "annotation": { "$ref": "#/definitions/annotation" }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "required": ["id", "module", "family"],
+      "properties": {
+        "id": { "type": "string" },
+        "module": { "type": "string" },
+        "family": { "type": "string", "enum": ["softmax", "gaussian_likelihood", "categorical", "custom"] },
+        "equation": { "type": "string" },
+        "over": { "type": "string" }
+      }
+    }
+  }
+}

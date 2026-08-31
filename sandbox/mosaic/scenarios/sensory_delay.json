@@ -1,0 +1,30 @@
+{
+  "id": "sensory-feedback-delay",
+  "title": "感覺回饋延遲",
+  "model": "mosaic-1998-1d",
+  "condition": { "feedback_delay_steps": [0, 1, 2] },
+  "realWorldAnalogy": "視覺或本體感覺慢了約 100–200 ms。只靠反射修正軌跡會震盪；forward model 的其中一個計算理由，就是在延遲回饋到達前先預測後果。",
+  "beats": [
+    {
+      "trial": 30,
+      "delaySteps": 0,
+      "t": "switch_no_delay",
+      "caption": "無延遲：力場開啟後，λ₂ 可以相對乾淨地上升。",
+      "watch": ["delay", "lambda_dist", "u_fb"]
+    },
+    {
+      "trial": 30,
+      "delaySteps": 1,
+      "t": "switch_100ms",
+      "caption": "延遲 100 ms：責任訊號切換變慢，回饋力開始不穩。",
+      "watch": ["delay", "u_fb", "lambda_dist"]
+    },
+    {
+      "trial": 30,
+      "delaySteps": 2,
+      "t": "switch_200ms",
+      "caption": "延遲 200 ms：u_fb 震盪更明顯，gated learning 變差。這就是「為什麼需要預測」的現場。",
+      "watch": ["delay", "u_fb", "fwd_1", "fwd_2"]
+    }
+  ]
+}

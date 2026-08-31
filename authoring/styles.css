@@ -1,0 +1,17 @@
+:root { --paper:#f3eee4; --ink:#1c1915; --line:#d7cfc2; --m1:#2f5d8c; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", sans-serif; background: var(--paper); color: var(--ink); }
+header { display: flex; gap: 1rem; align-items: baseline; padding: 0.8rem 1rem; border-bottom: 1px solid var(--line); }
+header a { color: var(--m1); }
+.note { color: #6b645a; font-size: 0.85rem; }
+.layout { display: grid; grid-template-columns: 200px 1fr 280px; min-height: calc(100vh - 52px); }
+aside { padding: 0.8rem; border-right: 1px solid var(--line); overflow: auto; }
+.props { border-right: 0; border-left: 1px solid var(--line); }
+h2 { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+button, select, input, textarea { font: inherit; width: 100%; margin: 0.2rem 0; padding: 0.3rem; border: 1px solid var(--ink); background: #fffaf2; }
+.hint { font-size: 0.8rem; color: #6b645a; }
+#canvas { width: 100%; height: calc(100vh - 52px); background: #f7f3ea; }
+pre { white-space: pre-wrap; font-size: 0.78rem; background: #efe8da; padding: 0.5rem; }
+.node { cursor: pointer; }
+.edge { fill: none; stroke: #5c564c; marker-end: url(#arrow); }
+label { font-size: 0.75rem; display: block; margin-top: 0.4rem; }

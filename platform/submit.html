@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Submit — MindelScope</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <p><a href="./index.html">MindelScope</a></p>
+    <h1>Submit a model</h1>
+  </header>
+  <main>
+    <h2>What to upload</h2>
+    <ol>
+      <li>A <code>.mindel.json</code> file that validates against MindelSpec.</li>
+      <li>Optional <code>traces.json</code> bound to module ids.</li>
+      <li>At least one scenario script that names a real behaviour.</li>
+      <li>A citation and an interpretation status.</li>
+    </ol>
+    <h2>Classic-model confirmation</h2>
+    <p>If you are visualising someone else’s published model:</p>
+    <ol>
+      <li>Start as <span class="badge unofficial">unofficial interpretation</span>.</li>
+      <li>Contact the original team (or a named domain reviewer) with the viewer link and a one-page mapping of nodes to paper sections.</li>
+      <li>Only after written confirmation may the badge become <span class="badge confirmed">author-confirmed</span>.</li>
+    </ol>
+    <p>This page does not host a database yet. Open a pull request that adds your files under <code>examples/</code> and a row in <code>platform/catalog.js</code>.</p>
+    <form id="intake" onsubmit="event.preventDefault(); document.getElementById('out').hidden=false;">
+      <label>Model title <input name="title" required /></label>
+      <label>Citation <input name="cite" required /></label>
+      <label>Status
+        <select name="status">
+          <option value="unofficial">unofficial interpretation</option>
+          <option value="author-confirmed">author-confirmed</option>
+        </select>
+      </label>
+      <label>Original-team contact (if classic) <input name="contact" /></label>
+      <label>Meaning checklist
+        <textarea rows="5">Each node maps to a paper section:
+Equations match the implementation:
+Unimplemented paper parts are grey:
+Scenario is the same world the simulator runs:
+</textarea>
+      </label>
+      <button type="submit">Generate PR checklist</button>
+    </form>
+    <p id="out" hidden>Checklist copied into the form. Attach the JSON files in a GitHub pull request; do not claim author-confirmed without the email or letter on file.</p>
+  </main>
+</body>
+</html>

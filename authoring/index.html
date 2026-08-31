@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MindelScope authoring</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <a href="../platform/index.html">MindelScope</a>
+    <strong>Authoring MVP</strong>
+    <span class="note">Human draws the draft. The agent only edits MindelSpec.</span>
+  </header>
+  <div class="layout">
+    <aside class="palette">
+      <h2>Modules</h2>
+      <button data-type="process">process</button>
+      <button data-type="representation">representation</button>
+      <button data-type="comparator">comparator</button>
+      <button data-type="gate">gate</button>
+      <button data-type="distribution">distribution</button>
+      <button data-type="delay">delay</button>
+      <button data-type="plant">plant</button>
+      <h2>Edge</h2>
+      <select id="edgeType">
+        <option value="information">information</option>
+        <option value="gating">gating</option>
+        <option value="error">error</option>
+        <option value="context">context</option>
+      </select>
+      <p class="hint">Click two nodes to connect with the selected edge type.</p>
+      <h2>Actions</h2>
+      <button id="loadMosaic">Load MOSAIC sandbox draft</button>
+      <button id="runAgent">Run consistency agent</button>
+      <button id="copyPrompt">Copy LLM prompt</button>
+      <button id="exportBtn">Export JSON</button>
+      <button id="validateBtn">Validate locally</button>
+    </aside>
+    <svg id="canvas" viewBox="0 0 1100 720"></svg>
+    <aside class="props">
+      <h2>Selected</h2>
+      <div id="form"><p class="hint">Select a node.</p></div>
+      <h2>Agent</h2>
+      <pre id="agentLog">No suggestions yet.</pre>
+    </aside>
+  </div>
+  <script src="./agent.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

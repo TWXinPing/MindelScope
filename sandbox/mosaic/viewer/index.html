@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOSAIC — information flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <p class="wip">Sandbox · illustrative · unofficial · not workshop-ready</p>
+
+  <header class="top">
+    <div class="brand">
+      <a href="../../../index.html">MindelScope</a>
+      <span class="sep">/</span>
+      <strong>MOSAIC information flow</strong>
+    </div>
+    <p class="cite">Wolpert &amp; Kawato (1998) · illustrative, not a quantitative replica</p>
+    <label class="paper-toggle">
+      <input type="checkbox" id="showPaper" />
+      Show paper-only box
+    </label>
+  </header>
+
+  <main class="flow-wrap">
+    <svg id="flow" viewBox="0 0 1180 670" role="img" aria-label="MOSAIC information flow">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c564c" />
+        </marker>
+        <marker id="arr1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f5d8c" />
+        </marker>
+        <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#c46b1a" />
+        </marker>
+        <linearGradient id="honey" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stop-color="#e8b15a" stop-opacity="0.15" />
+          <stop offset="100%" stop-color="#c46b1a" stop-opacity="0.4" />
+        </linearGradient>
+      </defs>
+
+      <text x="16" y="22" class="row-label">Control</text>
+
+      <!-- nodes: control row -->
+      <g class="node" data-id="desired" transform="translate(30,70)">
+        <polygon points="14,0 168,0 154,52 0,52" class="shape rep" />
+        <text x="84" y="22" class="nl">desired state</text>
+        <text x="84" y="40" class="nv" id="vDes">x* = 1.00</text>
+      </g>
+
+      <g class="node" data-id="inv1" transform="translate(250,40)">
+        <rect width="150" height="48" rx="8" class="shape m1" />
+        <text x="75" y="20" class="nl">Inverse 1 · air</text>
+        <text x="75" y="38" class="nv" id="vU1">u₁ = 0.00  â = 0.00</text>
+      </g>
+      <g class="node" data-id="inv2" transform="translate(250,110)">
+        <rect width="150" height="48" rx="8" class="shape m2" />
+        <text x="75" y="20" class="nl">Inverse 2 · visc.</text>
+        <text x="75" y="38" class="nv" id="vU2">u₂ = 0.00  â = 7.00</text>
+      </g>
+
+      <g class="node" data-id="gate" transform="translate(500,70)">
+        <rect width="150" height="52" rx="22" class="shape gate" />
+        <text x="75" y="22" class="nl">λ mix</text>
+        <text x="75" y="40" class="nv" id="vU">u = 0.00</text>
+      </g>
+
+      <g class="node" data-id="plant" transform="translate(740,48)">
+        <rect width="320" height="130" class="shape plant" />
+        <text x="160" y="18" class="nl">Plant · actual next state</text>
+        <rect id="viscousMini" x="150" y="28" width="160" height="72" fill="url(#honey)" opacity="0" />
+        <line x1="24" y1="88" x2="296" y2="88" class="mini-table" />
+        <circle id="miniTarget" cx="280" cy="70" r="8" class="mini-target" />
+        <circle id="miniHand" cx="40" cy="70" r="7" class="hand" />
+        <circle id="miniPred1" cx="40" cy="70" r="6" class="ghost g1" />
+        <circle id="miniPred2" cx="40" cy="70" r="6" class="ghost g2" />
+        <text x="40" y="118" class="nv">start</text>
+        <text x="160" y="118" class="nv">filled = x_t+1 · rings = x̂</text>
+        <text x="280" y="118" class="nv">target</text>
+      </g>
+
+      <g class="node" data-id="context" transform="translate(1072,64)">
+        <polygon points="12,0 108,0 96,48 0,48" class="shape rep" />
+        <text x="54" y="20" class="nl">context c_t</text>
+        <text x="54" y="38" class="nv" id="vCt">air</text>
+      </g>
+
+      <text x="500" y="188" class="time-note">time t+1 — plant writes the next current state</text>
+      <g class="node" data-id="next" transform="translate(500,198)">
+        <polygon points="14,0 168,0 154,48 0,48" class="shape rep" />
+        <text x="84" y="20" class="nl">next current state</text>
+        <text x="84" y="38" class="nv" id="vXnext">x_t+1 = 0.04</text>
+      </g>
+
+      <!-- prediction row -->
+      <text x="16" y="348" class="row-label">Prediction</text>
+      <text x="250" y="368" class="time-note">time t — predict x̂_t+1 from x_t</text>
+      <text x="500" y="368" class="time-note">time t+1 — compare held x̂ with x_t+1</text>
+
+      <g class="node" data-id="current" transform="translate(30,410)">
+        <polygon points="14,0 168,0 154,52 0,52" class="shape rep" />
+        <text x="84" y="22" class="nl">current state</text>
+        <text x="84" y="40" class="nv" id="vX">x_t = 0.04</text>
+      </g>
+
+      <g class="node" data-id="fwd1" transform="translate(250,380)">
+        <rect width="150" height="48" rx="8" class="shape m1" />
+        <text x="75" y="20" class="nl">Forward 1</text>
+        <text x="75" y="38" class="nv" id="vP1">x̂₁ = 0.04  ŵ = 0.00</text>
+      </g>
+      <g class="node" data-id="fwd2" transform="translate(250,450)">
+        <rect width="150" height="48" rx="8" class="shape m2" />
+        <text x="75" y="20" class="nl">Forward 2</text>
+        <text x="75" y="38" class="nv" id="vP2">x̂₂ = 0.04  ŵ = 7.00</text>
+      </g>
+
+      <g class="node" data-id="delay1" transform="translate(412,384)">
+        <rect width="72" height="40" rx="8" class="shape delay" />
+        <text x="36" y="16" class="nl">delay</text>
+        <text x="36" y="32" class="nv" id="vD1">hold x̂₁</text>
+      </g>
+      <g class="node" data-id="delay2" transform="translate(412,454)">
+        <rect width="72" height="40" rx="8" class="shape delay" />
+        <text x="36" y="16" class="nl">delay</text>
+        <text x="36" y="32" class="nv" id="vD2">hold x̂₂</text>
+      </g>
+
+      <g class="node" data-id="cmp1" transform="translate(508,368)">
+        <circle cx="36" cy="36" r="34" class="shape cmp" />
+        <line x1="20" y1="20" x2="52" y2="52" class="cmp-x" />
+        <line x1="52" y1="20" x2="20" y2="52" class="cmp-x" />
+        <text x="36" y="30" class="nl">e₁</text>
+        <text x="36" y="48" class="nv" id="vE1">0.00</text>
+      </g>
+      <g class="node" data-id="cmp2" transform="translate(508,438)">
+        <circle cx="36" cy="36" r="34" class="shape cmp" />
+        <line x1="20" y1="20" x2="52" y2="52" class="cmp-x" />
+        <line x1="52" y1="20" x2="20" y2="52" class="cmp-x" />
+        <text x="36" y="30" class="nl">e₂</text>
+        <text x="36" y="48" class="nv" id="vE2">0.00</text>
+      </g>
+
+      <g class="node" data-id="lambda" transform="translate(740,400)">
+        <rect width="180" height="88" rx="6" class="shape dist" />
+        <text x="90" y="20" class="nl">responsibility λ</text>
+        <text x="90" y="42" class="nv" id="vL1">λ₁ air = 0.50</text>
+        <text x="90" y="62" class="nv" id="vL2">λ₂ viscous = 0.50</text>
+        <rect x="20" y="72" width="140" height="8" fill="#e6dfd2" />
+        <rect id="lamFill1" x="20" y="72" height="8" width="70" fill="#2f5d8c" />
+      </g>
+
+      <g class="node paper-only" id="paperNode" data-id="predictor" transform="translate(940,400)" hidden>
+        <rect width="140" height="70" rx="8" class="shape paper" />
+        <text x="70" y="28" class="nl">resp. predictor</text>
+        <text x="70" y="48" class="nv">paper only</text>
+      </g>
+
+      <!-- edges -->
+      <g class="edges">
+        <path id="p_des_inv1" class="edge" d="M 198 96 C 220 96, 230 64, 250 64" marker-end="url(#arr1)" />
+        <path id="p_des_inv2" class="edge" d="M 198 96 C 220 96, 230 134, 250 134" marker-end="url(#arr2)" />
+        <text class="elbl" x="210" y="84">desired state</text>
+
+        <path id="p_x_inv1" class="edge" d="M 114 410 C 114 210, 200 64, 250 70" marker-end="url(#arr1)" />
+        <path id="p_x_inv2" class="edge" d="M 114 410 C 130 270, 200 134, 250 140" marker-end="url(#arr2)" />
+        <text class="elbl" x="128" y="250">current x_t</text>
+
+        <path id="p_inv1_gate" class="edge e1" d="M 400 64 C 450 64, 470 86, 500 90" marker-end="url(#arr1)" />
+        <path id="p_inv2_gate" class="edge e2" d="M 400 134 C 450 134, 470 106, 500 102" marker-end="url(#arr2)" />
+        <text class="elbl e1" x="418" y="54">motor command u₁</text>
+        <text class="elbl e2" x="418" y="158">motor command u₂</text>
+
+        <path id="p_lam_gate" class="edge gate-edge" d="M 920 444 C 1040 444, 1040 96, 650 96" marker-end="url(#arr)" />
+        <text class="elbl" x="960" y="270">λ gates mix</text>
+
+        <path id="p_gate_plant" class="edge" d="M 650 96 C 690 96, 710 96, 740 96" marker-end="url(#arr)" />
+        <text class="elbl" x="668" y="86">motor command u</text>
+
+        <path id="p_c_plant" class="edge" d="M 1072 88 C 1048 88, 1064 110, 1060 113" marker-end="url(#arr)" />
+        <text class="elbl" x="1074" y="54">c_t → plant only</text>
+
+        <path id="p_plant_next" class="edge" d="M 740 160 C 710 160, 690 222, 668 222" marker-end="url(#arr)" />
+        <text class="elbl" x="678" y="150">actual x_t+1</text>
+
+        <path id="p_next_current" class="edge" d="M 500 222 C 280 222, 140 340, 114 410" marker-end="url(#arr)" />
+        <text class="elbl" x="220" y="214">becomes current x_t next step</text>
+
+        <path id="p_x_fwd1" class="edge e1" d="M 198 436 C 220 436, 230 404, 250 404" marker-end="url(#arr1)" />
+        <path id="p_x_fwd2" class="edge e2" d="M 198 436 C 220 436, 230 474, 250 474" marker-end="url(#arr2)" />
+        <text class="elbl" x="200" y="458">current x_t</text>
+
+        <path id="p_u_fwd1" class="edge e1" d="M 510 122 C 430 160, 340 300, 250 400" marker-end="url(#arr1)" />
+        <path id="p_u_fwd2" class="edge e2" d="M 510 122 C 400 200, 330 410, 250 470" marker-end="url(#arr2)" />
+        <text class="elbl" x="318" y="300">motor command u</text>
+
+        <path id="p_fwd1_delay1" class="edge e1" d="M 400 404 C 404 404, 408 404, 412 404" marker-end="url(#arr1)" />
+        <path id="p_fwd2_delay2" class="edge e2" d="M 400 474 C 404 474, 408 474, 412 474" marker-end="url(#arr2)" />
+        <text class="elbl e1" x="402" y="374">x̂_t+1</text>
+        <text class="elbl e2" x="402" y="508">x̂_t+1</text>
+
+        <path id="p_delay1_cmp1" class="edge e1" d="M 484 404 C 492 404, 500 404, 510 404" marker-end="url(#arr1)" />
+        <path id="p_delay2_cmp2" class="edge e2" d="M 484 474 C 492 474, 500 474, 510 474" marker-end="url(#arr2)" />
+
+        <path id="p_next_cmp1" class="edge" d="M 545 246 C 545 300, 544 340, 544 374" marker-end="url(#arr)" />
+        <path id="p_next_cmp2" class="edge" d="M 620 246 C 640 340, 640 460, 578 474" marker-end="url(#arr)" />
+        <text class="elbl" x="630" y="330">next current x_t+1</text>
+
+        <path id="p_next_fwd1" class="edge e1" d="M 520 246 C 460 300, 380 350, 325 380" marker-end="url(#arr1)" />
+        <path id="p_next_fwd2" class="edge e2" d="M 500 246 C 400 330, 300 420, 250 460" marker-end="url(#arr2)" />
+        <text class="elbl" x="360" y="250">x_t+1 also enters forward</text>
+
+        <path id="p_e1_lam" class="edge e1" d="M 578 404 C 700 404, 720 430, 740 434" marker-end="url(#arr1)" />
+        <path id="p_e2_lam" class="edge e2" d="M 578 474 C 700 474, 720 460, 740 458" marker-end="url(#arr2)" />
+        <text class="elbl" x="680" y="394">e = x_t+1 − x̂_t+1</text>
+
+        <path id="p_lam_fwd1" class="edge e1 learn" d="M 760 488 C 760 545, 300 545, 280 428" marker-end="url(#arr1)" />
+        <path id="p_lam_fwd2" class="edge e2 learn" d="M 800 488 C 800 575, 260 575, 260 498" marker-end="url(#arr2)" />
+        <text class="elbl" x="400" y="560">λ gates / updates forward</text>
+
+        <path id="p_pred_lam" class="edge paper-edge" d="M 940 435 C 900 435, 890 444, 920 444" marker-end="url(#arr)" hidden />
+      </g>
+
+      <g id="tokens"></g>
+      <g id="hits"></g>
+    </svg>
+    <aside class="human" id="human">
+      <p class="kicker">Interactive message</p>
+      <p class="step-label" id="stepLabel">Click Inverse or Forward, or press Inverse cycle / Forward cycle.</p>
+      <div class="pair">
+        <div>
+          <h3>In the model</h3>
+          <p id="inModel">A packet of information travels along a labelled edge.</p>
+        </div>
+        <div>
+          <h3>In the human</h3>
+          <p id="inHuman">The same step as an ordinary reach: intending, commanding, feeling, predicting.</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="story">
+    <button type="button" id="send">Send next message</button>
+    <button type="button" id="playInv">Inverse cycle</button>
+    <button type="button" id="playFwd">Forward cycle</button>
+    <ol class="beats" id="beats">
+      <li data-phase="0" class="active">Reach in air</li>
+      <li data-phase="1">Reach into viscous medium</li>
+      <li data-phase="2">Medium gone; old skill returns</li>
+    </ol>
+    <p class="caption" id="caption">Example: you reach for a mug. Desired state is “fingertip on the handle.” That signal is sent into the inverse models.</p>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

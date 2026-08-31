@@ -1,0 +1,451 @@
+{
+  "mindelspec": "0.1",
+  "id": "mosaic-1998-1d",
+  "title": "MOSAIC (simplified 1D velocity control)",
+  "citation": "Wolpert, D. M., & Kawato, M. (1998). Multiple paired forward and inverse models for motor control. Neural Networks, 11(7–8), 1317–1329.",
+  "interpretation": "unofficial",
+  "description": "Two paired forward–inverse modules learn and switch between free space and a viscous force field. Sensory delay is optional. Responsibility is inferred from prediction error only; the paper's responsibility predictor is shown but not simulated.",
+  "levels": {
+    "computational": "Select and learn multiple controllers so that motor commands remain appropriate when the dynamics of the body–world interaction change.",
+    "algorithmic": "Pair each inverse controller with a forward predictor. Softmax of Gaussian prediction-error likelihoods yields a responsibility distribution λ that both gates motor output and gates learning.",
+    "implementational": "Not claimed. This demo is a 1D velocity plant, not a cerebellar mapping."
+  },
+  "unimplemented": [
+    "resp_predictor"
+  ],
+  "scenarios": [
+    "viscous-field-switch",
+    "sensory-feedback-delay"
+  ],
+  "traceBinding": {
+    "lambda_dist": "lambda",
+    "fwd_1": "w[0]",
+    "fwd_2": "w[1]",
+    "inv_1": "a[0]",
+    "inv_2": "a[1]",
+    "plant": "v",
+    "u_fb": "u_fb",
+    "gate": "u_ff"
+  },
+  "distributions": [
+    {
+      "id": "lambda_softmax",
+      "module": "lambda_dist",
+      "family": "gaussian_likelihood",
+      "over": "modules",
+      "equation": "\\lambda_i \\propto \\exp(-e_i^2 / \\sigma^2),\\quad \\sum_i \\lambda_i = 1"
+    }
+  ],
+  "modules": [
+    {
+      "id": "v_des",
+      "type": "representation",
+      "label": "Desired velocity",
+      "role": "goal",
+      "annotation": {
+        "goal": "Specify the intended movement.",
+        "equation": "v^{des}_t = \\sin(t)",
+        "scenario": "伸手時想要的鐘形速度剖面（慢–快–慢）。"
+      }
+    },
+    {
+      "id": "inv_1",
+      "type": "process",
+      "label": "Inverse 1",
+      "role": "controller",
+      "group": "module_1",
+      "parameters": {
+        "initial_a": 0.3
+      },
+      "annotation": {
+        "goal": "Produce a feedforward motor command for free-space dynamics.",
+        "equation": "u^{ff}_1 = a_1 (v^{des} - v)",
+        "scenario": "在空氣中伸手時，這個控制器應逐漸主導。"
+      }
+    },
+    {
+      "id": "inv_2",
+      "type": "process",
+      "label": "Inverse 2",
+      "role": "controller",
+      "group": "module_2",
+      "parameters": {
+        "initial_a": 0.8
+      },
+      "annotation": {
+        "goal": "Produce a feedforward motor command for viscous dynamics.",
+        "equation": "u^{ff}_2 = a_2 (v^{des} - v)",
+        "scenario": "進入黏滯力場後，這個控制器應逐漸主導。"
+      }
+    },
+    {
+      "id": "gate",
+      "type": "gate",
+      "label": "λ-gated mix",
+      "role": "mixer",
+      "annotation": {
+        "goal": "Combine inverse-model outputs in proportion to current beliefs about context.",
+        "equation": "u^{ff} = \\sum_i \\lambda_i u^{ff}_i",
+        "scenario": "力場切換時，線寬跟著 λ 改掛，而不是兩個控制器同時全力輸出。"
+      }
+    },
+    {
+      "id": "u_fb",
+      "type": "process",
+      "label": "Feedback reflex",
+      "role": "error_corrector",
+      "annotation": {
+        "goal": "Correct residual tracking error and supply the FEL teaching signal.",
+        "equation": "u^{fb} = k_{fb}(v^{des} - v)",
+        "scenario": "前饋還沒學會時，要靠這條「反射」硬拉回目標；學會後 u_fb 應下降。"
+      }
+    },
+    {
+      "id": "plant",
+      "type": "plant",
+      "label": "Arm / world",
+      "role": "body_environment",
+      "annotation": {
+        "goal": "The actual dynamics being controlled.",
+        "equation": "\\dot{v} = (u - b v)/m",
+        "scenario": "自由空間 b=0；黏滯力場 b=2.5，像伸進水或蜂蜜。"
+      }
+    },
+    {
+      "id": "delay",
+      "type": "delay",
+      "label": "Sensory delay",
+      "role": "feedback_delay",
+      "annotation": {
+        "goal": "Hold sensory state so that controllers and predictors see a delayed world.",
+        "equation": "v^{del}_t = v_{t-d},\\quad d\\in\\{0,1,2\\}\\ \\text{steps (0/100/200 ms)}",
+        "scenario": "回饋變慢時，單靠反射會抖；這是論文主張需要 forward model 的理由之一。"
+      }
+    },
+    {
+      "id": "fwd_1",
+      "type": "process",
+      "label": "Forward 1",
+      "role": "predictor",
+      "group": "module_1",
+      "parameters": {
+        "initial_w": 0.3
+      },
+      "annotation": {
+        "goal": "Predict the next velocity if this module's world is true.",
+        "equation": "\\hat{v}_{t+1}^{(1)} = v_t + w_1 u_t",
+        "scenario": "若仍用「空氣」的預測去解釋「水裡」的結果，預測誤差會變大。"
+      }
+    },
+    {
+      "id": "fwd_2",
+      "type": "process",
+      "label": "Forward 2",
+      "role": "predictor",
+      "group": "module_2",
+      "parameters": {
+        "initial_w": 0.7
+      },
+      "annotation": {
+        "goal": "Predict the next velocity under viscous dynamics.",
+        "equation": "\\hat{v}_{t+1}^{(2)} = v_t + w_2 u_t",
+        "scenario": "力場開啟後，這個預測器的誤差應相對較小，從而提高 λ₂。"
+      }
+    },
+    {
+      "id": "cmp_1",
+      "type": "comparator",
+      "label": "Prediction error 1",
+      "role": "prediction_error",
+      "group": "module_1",
+      "annotation": {
+        "goal": "Measure how wrong forward model 1 was.",
+        "equation": "e_1 = v - \\hat{v}^{(1)}",
+        "scenario": "力場突然出現時，模組 1 的誤差先飆高。"
+      }
+    },
+    {
+      "id": "cmp_2",
+      "type": "comparator",
+      "label": "Prediction error 2",
+      "role": "prediction_error",
+      "group": "module_2",
+      "annotation": {
+        "goal": "Measure how wrong forward model 2 was.",
+        "equation": "e_2 = v - \\hat{v}^{(2)}",
+        "scenario": "回到自由空間時，模組 2 的誤差變大，λ 切回模組 1。"
+      }
+    },
+    {
+      "id": "lambda_dist",
+      "type": "distribution",
+      "label": "Responsibility λ",
+      "role": "hypothesis_distribution",
+      "annotation": {
+        "goal": "Turn prediction errors into a probability distribution over which module currently owns the context.",
+        "equation": "\\lambda_i \\propto \\exp(-e_i^2 / \\sigma^2)",
+        "scenario": "這就是「現在比較像空氣還是比較像水」的信念。"
+      }
+    },
+    {
+      "id": "resp_predictor",
+      "type": "process",
+      "label": "Responsibility predictor",
+      "role": "context_prior",
+      "implemented": false,
+      "annotation": {
+        "goal": "Select modules from contextual cues before movement, not only from prediction error.",
+        "equation": "\\lambda^{prior} = f(\\text{sensory context})",
+        "scenario": "論文中的物體形狀線索；本 1D 模擬沒有跑。圖上灰掉。"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_des_inv1",
+      "type": "information",
+      "source": "v_des",
+      "target": "inv_1",
+      "signal": "v_des"
+    },
+    {
+      "id": "e_des_inv2",
+      "type": "information",
+      "source": "v_des",
+      "target": "inv_2",
+      "signal": "v_des"
+    },
+    {
+      "id": "e_des_fb",
+      "type": "information",
+      "source": "v_des",
+      "target": "u_fb",
+      "signal": "v_des"
+    },
+    {
+      "id": "e_inv1_gate",
+      "type": "gating",
+      "source": "inv_1",
+      "target": "gate",
+      "signal": "u_ff_1",
+      "gatedBy": "lambda_dist"
+    },
+    {
+      "id": "e_inv2_gate",
+      "type": "gating",
+      "source": "inv_2",
+      "target": "gate",
+      "signal": "u_ff_2",
+      "gatedBy": "lambda_dist"
+    },
+    {
+      "id": "e_gate_plant",
+      "type": "information",
+      "source": "gate",
+      "target": "plant",
+      "signal": "u_ff"
+    },
+    {
+      "id": "e_fb_plant",
+      "type": "error",
+      "source": "u_fb",
+      "target": "plant",
+      "signal": "u_fb"
+    },
+    {
+      "id": "e_plant_delay",
+      "type": "information",
+      "source": "plant",
+      "target": "delay",
+      "signal": "v"
+    },
+    {
+      "id": "e_delay_inv1",
+      "type": "information",
+      "source": "delay",
+      "target": "inv_1",
+      "signal": "v_delayed"
+    },
+    {
+      "id": "e_delay_inv2",
+      "type": "information",
+      "source": "delay",
+      "target": "inv_2",
+      "signal": "v_delayed"
+    },
+    {
+      "id": "e_delay_fb",
+      "type": "information",
+      "source": "delay",
+      "target": "u_fb",
+      "signal": "v_delayed"
+    },
+    {
+      "id": "e_delay_cmp1",
+      "type": "information",
+      "source": "delay",
+      "target": "cmp_1",
+      "signal": "v_delayed"
+    },
+    {
+      "id": "e_delay_cmp2",
+      "type": "information",
+      "source": "delay",
+      "target": "cmp_2",
+      "signal": "v_delayed"
+    },
+    {
+      "id": "e_fwd1_cmp1",
+      "type": "information",
+      "source": "fwd_1",
+      "target": "cmp_1",
+      "signal": "v_hat_1"
+    },
+    {
+      "id": "e_fwd2_cmp2",
+      "type": "information",
+      "source": "fwd_2",
+      "target": "cmp_2",
+      "signal": "v_hat_2"
+    },
+    {
+      "id": "e_cmp1_lam",
+      "type": "error",
+      "source": "cmp_1",
+      "target": "lambda_dist",
+      "signal": "e_1"
+    },
+    {
+      "id": "e_cmp2_lam",
+      "type": "error",
+      "source": "cmp_2",
+      "target": "lambda_dist",
+      "signal": "e_2"
+    },
+    {
+      "id": "e_lam_gate",
+      "type": "gating",
+      "source": "lambda_dist",
+      "target": "gate",
+      "signal": "lambda"
+    },
+    {
+      "id": "e_lam_fwd1",
+      "type": "error",
+      "source": "lambda_dist",
+      "target": "fwd_1",
+      "signal": "gated_learning"
+    },
+    {
+      "id": "e_lam_fwd2",
+      "type": "error",
+      "source": "lambda_dist",
+      "target": "fwd_2",
+      "signal": "gated_learning"
+    },
+    {
+      "id": "e_lam_inv1",
+      "type": "error",
+      "source": "lambda_dist",
+      "target": "inv_1",
+      "signal": "gated_learning"
+    },
+    {
+      "id": "e_lam_inv2",
+      "type": "error",
+      "source": "lambda_dist",
+      "target": "inv_2",
+      "signal": "gated_learning"
+    },
+    {
+      "id": "e_ctx_pred",
+      "type": "context",
+      "source": "resp_predictor",
+      "target": "lambda_dist",
+      "signal": "lambda_prior",
+      "implemented": false
+    }
+  ],
+  "layout": {
+    "v_des": {
+      "x": 80,
+      "y": 80
+    },
+    "inv_1": {
+      "x": 280,
+      "y": 40
+    },
+    "inv_2": {
+      "x": 280,
+      "y": 140
+    },
+    "u_fb": {
+      "x": 280,
+      "y": 240
+    },
+    "gate": {
+      "x": 500,
+      "y": 90
+    },
+    "plant": {
+      "x": 720,
+      "y": 160
+    },
+    "delay": {
+      "x": 720,
+      "y": 320
+    },
+    "fwd_1": {
+      "x": 280,
+      "y": 400
+    },
+    "fwd_2": {
+      "x": 280,
+      "y": 500
+    },
+    "cmp_1": {
+      "x": 500,
+      "y": 400
+    },
+    "cmp_2": {
+      "x": 500,
+      "y": 500
+    },
+    "lambda_dist": {
+      "x": 720,
+      "y": 450
+    },
+    "resp_predictor": {
+      "x": 80,
+      "y": 450
+    }
+  },
+  "caption": "Two paired forward–inverse modules switch between free space and a viscous field; λ comes from prediction error, not from a context predictor.",
+  "staticOnly": false,
+  "doubleEncoding": {
+    "typeByShape": true,
+    "identityByColor": true
+  },
+  "reports": {
+    "clocks": [
+      "across_trials",
+      "within_trial"
+    ],
+    "hasDistribution": true,
+    "hasScenario": true,
+    "hasUnimplementedSplit": true
+  },
+  "groups": [
+    {
+      "id": "module_1",
+      "label": "Free-space pair"
+    },
+    {
+      "id": "module_2",
+      "label": "Viscous-field pair"
+    }
+  ],
+  "relatedStandards": {
+    "doi": "10.1016/S0893-6080(98)00066-5"
+  }
+}
